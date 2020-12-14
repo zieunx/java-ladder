@@ -1,4 +1,4 @@
-package nextstep.ladder.domain;
+package nextstep.step4.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,19 +6,18 @@ import java.util.stream.IntStream;
 
 public class Ladder {
 
-    private static final int ZERO = 0;
-
-    private List<Line> lines;
+    private final List<Line> lines;
 
     private Ladder(List<Line> lines) {
         this.lines = lines;
     }
 
-    public static Ladder initLadder(Users users, Height height) {
-        List<Line> lines = new ArrayList<>();
+    public static Ladder init(int numberOfUsers, int height) {
+        List<Line> lines = new ArrayList<>(height);
 
-        IntStream.range(ZERO, height.getHeight())
-                .forEach(number -> lines.add(Line.initLine(users)));
+        IntStream.range(0, height)
+                .forEach(row -> lines.add(Line.init(numberOfUsers)));
+
         return new Ladder(lines);
     }
 
@@ -26,10 +25,18 @@ public class Ladder {
         return new Ladder(lines);
     }
 
+    public int move(int position) {
+        int current = position;
+        for(Line line : lines) {
+            current = line.move(current);
+        }
+        return current;
+    }
+
     public int getUserFinalIndex(User user) {
         int index = user.getIndex();
         for(Line line : lines) {
-            index = line.getNextIndex(index);
+            index = line.move(index);
         }
 
         return index;
